@@ -1,0 +1,57 @@
+openapi: 3.0.3
+info:
+  title: Core Billing Engine API
+  version: 1.0.0
+  description: Внутреннее API для работы со счетами и транзакциями (Ledger).
+
+paths:
+  /api/v1/transfers:
+    post:
+      summary: Инициировать перевод между счетами
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Уникальный ключ для защиты от двойного списания
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - source_account_id
+                - destination_account_id
+                - amount
+                - currency
+              properties:
+                source_account_id:
+                  type: string
+                  format: uuid
+                  description: Суррогатный ID счета отправителя
+                destination_account_id:
+                  type: string
+                  format: uuid
+                  description: Суррогатный ID счета получателя
+                amount:
+                  type: integer
+                  minimum: 100
+                  description: Сумма перевода в копейках (минимум 1 рубль)
+                currency:
+                  type: string
+                  maxLength: 3
+                  example: "RUB"
+                description:
+                  type: string
+                  maxLength: 255
+                  description: Назначение платежа
+      responses:
+        '200':
+          description: Перевод успешно обработан
+        '400':
+          description: Ошибка валидации (например, сумма меньше 100)
+        '409':
+          description: Конфликт (операция с таким Idempotency-Key уже обрабатывается)
