@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TransferInitiated",
+  "type": "object",
+  "properties": {
+    "event_id": { "type": "string", "format": "uuid", "description": "Для дедупликации (идемпотентности)" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "sender_account_id": { "type": "string", "format": "uuid" },
+    "receiver_account_id": { "type": "string", "format": "uuid" },
+    "amount": { "type": "number", "minimum": 0.01 },
+    "currency": { "type": "string", "minLength": 3, "maxLength": 3 }
+  },
+  "required": ["event_id", "created_at", "sender_account_id", "receiver_account_id", "amount", "currency"]
+}
